@@ -33,6 +33,16 @@ const applicationSchema = new mongoose.Schema({
 
 applicationSchema.index({ candidate: 1, job: 1 }, { unique: true });
 
+applicationSchema.pre(/^find/, function () {
+  this.populate([
+    {
+      path: "candidate",
+      select: "fullName email phoneNumber CandidateProfile -_id",
+    },
+    { path: "job", select: "title company type location -_id" },
+  ]);
+});
+
 const Application = mongoose.model("Application", applicationSchema);
 
 module.exports = Application;

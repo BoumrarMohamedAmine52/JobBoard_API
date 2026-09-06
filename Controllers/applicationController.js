@@ -81,7 +81,9 @@ exports.deleteMyApplication = asyncHandler(async (req, res, next) => {
 });
 
 exports.getJobApplications = asyncHandler(async (req, res, next) => {
-  const jobApplications = await Application.find({ job: req.params.id });
+  const jobApplications = await Application.find({
+    job: req.params.id,
+  });
 
   if (!jobApplications) {
     return next(new AppError("No candidate applied for this job yet.", 404));

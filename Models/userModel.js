@@ -45,6 +45,7 @@ const userSchema = new mongoose.Schema({
         jobTitle: { type: String },
         companyName: { type: String },
         dates: { type: String },
+        _id: false,
       },
     ],
     coreSkills: {
@@ -140,6 +141,17 @@ userSchema.methods.createResetPasswordToken = function () {
   this.expiredresetTokenDate = Date.now() + 10 * 60 * 1000;
   return resetToken;
 };
+
+userSchema.set("toJSON", {
+  transform: function (doc, ret) {
+    if (ret.CandidateProfile && ret.CandidateProfile.workExperience) {
+      ret.CandidateProfile.workExperience.forEach((exp) => {
+        delete exp._id;
+      });
+    }
+    return ret;
+  },
+});
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

@@ -67,9 +67,6 @@ exports.deleteJob = asyncHandler(async (req, res, next) => {
 
   res.status(204).json({
     status: "Success",
-    data: {
-      deletedJob,
-    },
   });
 });
 

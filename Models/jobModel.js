@@ -78,6 +78,14 @@ const jobSchema = new mongoose.Schema(
   },
 );
 
+jobSchema.pre(/^find/, function (doc) {
+  this.populate({
+    path: "postedBy",
+    select: "fullName company email -_id",
+  });
+  // console.log(this);
+});
+
 const Job = mongoose.model("Job", jobSchema);
 
 module.exports = Job;
