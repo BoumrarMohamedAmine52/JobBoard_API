@@ -2,12 +2,21 @@ const Job = require("../Models/jobModel");
 const User = require("../Models/userModel");
 const AppError = require("../Utils/AppError");
 const asyncHandler = require("express-async-handler");
+const FilteringFeatures = require("../Utils/filteringFeatures");
 
 exports.getAllJobs = asyncHandler(async (req, res, next) => {
-  const jobs = await Job.find();
+  console.log(req.query);
+  const filteredJobs = new FilteringFeatures(Job.find(), req.query)
+    .filter()
+    .sort()
+    .fields()
+    .pagination();
+  console.log(filteredJobs);
 
+  const jobs = await filteredJobs.query;
   res.status(200).json({
     status: "Success",
+    length: jobs.length,
     data: {
       jobs,
     },
