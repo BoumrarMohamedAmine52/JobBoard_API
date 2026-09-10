@@ -3,7 +3,7 @@ const Job = require("../Models/jobModel");
 const Application = require("../Models/applicationModel");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
-const AppError = require("../utils/AppError");
+const AppError = require("../Utils/AppError");
 const asyncHandler = require("express-async-handler");
 const sendEmail = require("../Utils/email");
 const crypto = require("crypto");
@@ -15,10 +15,10 @@ const signToken = (id) => {
   });
 };
 
-exports.logInLimiter = rateLimiter({
+exports.logInLimiter = rateLimit({
   max: 5,
   windowMs: 15 * 60 * 1000,
-  message: "Too many ligIn attempts, please try again in 15 minutes.",
+  message: "Too many logIn attempts, please try again in 15 minutes.",
 });
 
 exports.signUp = asyncHandler(async (req, res, next) => {
@@ -129,13 +129,19 @@ exports.restrictToOwnerOnly = (Model) => {
     }
 
     let ownerId;
-    if (user.role === "candidate" && Model.modelName === "Application")
+    if (req.user.role === "candidate" && Model.modelName === "Application")
       ownerId = doc.candidate;
-    if (user.role === "employer" && Model.modelName === "Job")
+    if (req.user.role === "employer" && Model.modelName === "Job")
       ownerId = doc.postedBy;
-    if (user.role === "employer" && Model.modelName === "Application") {
+    if (req.user.role === "employer" && Model.modelName === "Application") {
       const job = await Job.findById(doc.job);
       ownerId = job.postedBy;
+    }
+
+    if (!ownerId) {
+      return next(
+        new AppError("You are not authorized to perform this action.", 403),
+      );
     }
 
     if (ownerId.toString() !== req.user._id.toString()) {

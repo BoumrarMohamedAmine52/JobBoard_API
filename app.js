@@ -9,7 +9,7 @@ const hpp = require("hpp");
 const app = express();
 
 ///
-app.use(helmet(npm));
+app.use(helmet());
 
 ///
 const limiter = rateLimit({
