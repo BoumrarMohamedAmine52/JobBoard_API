@@ -11,7 +11,7 @@ const sendEmail = async (options) => {
   });
 
   const mailOptions = {
-    from: "Job Board API",
+    from: "job_board_api@gmail.com",
     to: options.email,
     subject: options.subject,
     text: options.message,

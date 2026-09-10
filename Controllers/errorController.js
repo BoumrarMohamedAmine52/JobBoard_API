@@ -40,12 +40,12 @@ const sendErrorDev = (err, res) => {
 
 const sendErrorProd = (err, res) => {
   if (err.isOperational) {
-    res.status(err.statusCode).json({
+    return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
     });
   }
-  res.status(err.statusCode).json({
+  return res.status(err.statusCode).json({
     status: "error",
     message: "semething went wrong",
   });

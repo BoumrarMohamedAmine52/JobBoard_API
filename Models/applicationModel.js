@@ -37,9 +37,9 @@ applicationSchema.pre(/^find/, function () {
   this.populate([
     {
       path: "candidate",
-      select: "fullName email phoneNumber CandidateProfile -_id",
+      select: "fullName email phoneNumber CandidateProfile",
     },
-    { path: "job", select: "title company type location -_id" },
+    { path: "job", select: "title company type location" },
   ]);
 });
 

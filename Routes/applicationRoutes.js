@@ -8,7 +8,7 @@ const Application = require("../Models/applicationModel");
 const Job = require("../Models/jobModel");
 
 Router.route("/")
-  .get(applicationControllers.getApplications)
+  //.get(applicationControllers.getApplications)
   .post(
     authControllers.protect,
     authControllers.givePermissionTo("candidate"),
@@ -23,7 +23,12 @@ Router.route("/myApplications").get(
 );
 
 Router.route("/:id")
-  .get(applicationControllers.getApplication)
+  .get(
+    authControllers.protect,
+    authControllers.givePermissionTo("candidate"),
+    authControllers.restrictToOwnerOnly(Application),
+    applicationControllers.getApplication,
+  )
   .patch(
     authControllers.protect,
     authControllers.givePermissionTo("candidate"),
@@ -42,6 +47,13 @@ Router.route("/getJobApplications/:id").get(
   authControllers.givePermissionTo("employer"),
   authControllers.restrictToOwnerOnly(Job),
   applicationControllers.getJobApplications,
+);
+
+Router.route("/applicationStatus/:id").patch(
+  authControllers.protect,
+  authControllers.givePermissionTo("employer"),
+  authControllers.restrictToOwnerOnly(Application),
+  applicationControllers.applicationStatus,
 );
 
 module.exports = Router;

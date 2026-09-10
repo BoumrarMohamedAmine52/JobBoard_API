@@ -92,14 +92,12 @@ const userSchema = new mongoose.Schema({
 // Mongoose is smart enough to recognize it as an async function and waits for the returned Promise to resolve —
 // completion is signaled automatically when the function finishes running, not by calling next().
 // Calling next() becomes optional, not required.
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return; //next();
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
 
   this.password = await bcrypt.hash(this.password, 10);
 
   this.passwordConfirm = undefined;
-
-  //next();
 });
 
 userSchema.methods.correctPassword = async function (
@@ -133,7 +131,7 @@ userSchema.methods.createResetPasswordToken = function () {
   const resetToken = crypto.randomBytes(32).toString("hex");
 
   this.resetToken = crypto
-    .createHash("sha-256")
+    .createHash("sha256")
     .update(resetToken)
     .digest("hex");
 

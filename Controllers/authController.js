@@ -115,22 +115,22 @@ exports.restrictToOwnerOnly = (Model) => {
   return asyncHandler(async (req, res, next) => {
     const doc = await Model.findById(req.params.id);
 
-    //console.log({ ...Model });
-    //console.log(Model.modelName);
     if (!doc) {
       return next(
         new AppError(`${Model.modelName} with that id do not exist.`, 404),
       );
     }
 
-    console.log(req.user._id);
-    console.log("doc : ", doc);
-    // console.log(
-    //   "ids : ",
-    //   doc.postedBy.toString() !== req.user._id.toString(),
-    // );
+    let ownerId;
+    if (user.role === "candidate" && Model.modelName === "Application")
+      ownerId = doc.candidate;
+    if (user.role === "employer" && Model.modelName === "Job")
+      ownerId = doc.postedBy;
+    if (user.role === "employer" && Model.modelName === "Application") {
+      const job = await Job.findById(doc.job);
+      ownerId = job.postedBy;
+    }
 
-    const ownerId = doc.postedBy || doc.candidate;
     if (ownerId.toString() !== req.user._id.toString()) {
       return next(
         new AppError(
@@ -208,16 +208,16 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   }
 
   if (Date.now() > user.expiredresetTokenDate) {
-    return next(new AppError("Expired reset token."));
+    return next(new AppError("Expired reset token.", 401));
   }
 
   const cryptedResetToken = crypto
-    .createHash("sha-256")
+    .createHash("sha256")
     .update(req.params.resetToken)
     .digest("hex");
 
   if (cryptedResetToken !== user.resetToken) {
-    return next(new AppError("Invalid token"));
+    return next(new AppError("Invalid token", 401));
   }
 
   user.password = req.body.newPassword;

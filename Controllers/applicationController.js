@@ -3,16 +3,16 @@ const Job = require("../Models/jobModel");
 const AppError = require("../Utils/AppError");
 const asyncHandler = require("express-async-handler");
 
-exports.getApplications = asyncHandler(async (req, res, next) => {
-  const applications = await Application.find();
+// exports.getApplications = asyncHandler(async (req, res, next) => {
+//   const applications = await Application.find();
 
-  res.status(200).json({
-    status: "Success",
-    data: {
-      applications,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: "Success",
+//     data: {
+//       applications,
+//     },
+//   });
+// });
 
 exports.getApplication = asyncHandler(async (req, res, next) => {
   const application = await Application.findById(req.params.id);
@@ -110,6 +110,26 @@ exports.addApplication = asyncHandler(async (req, res, next) => {
     status: "Success",
     data: {
       newApplication,
+    },
+  });
+});
+
+exports.applicationStatus = asyncHandler(async (req, res, next) => {
+  const { status } = req.body;
+
+  const updatedApplication = await Application.findByIdAndUpdate(
+    req.params.id,
+    { status },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  res.status(201).json({
+    status: "Success",
+    data: {
+      updatedApplication,
     },
   });
 });
