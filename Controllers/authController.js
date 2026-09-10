@@ -7,12 +7,19 @@ const AppError = require("../utils/AppError");
 const asyncHandler = require("express-async-handler");
 const sendEmail = require("../Utils/email");
 const crypto = require("crypto");
+const rateLimit = require("express-rate-limit");
 
 const signToken = (id) => {
   return jwt.sign({ id: id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
+
+exports.logInLimiter = rateLimiter({
+  max: 5,
+  windowMs: 15 * 60 * 1000,
+  message: "Too many ligIn attempts, please try again in 15 minutes.",
+});
 
 exports.signUp = asyncHandler(async (req, res, next) => {
   const newUser = await User.create(req.body);

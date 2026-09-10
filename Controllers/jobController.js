@@ -4,7 +4,7 @@ const AppError = require("../Utils/AppError");
 const asyncHandler = require("express-async-handler");
 const FilteringFeatures = require("../Utils/filteringFeatures");
 
-exports.getAllJobs = asyncHandler(async (req, res, next) => {
+exports.allJobs = asyncHandler(async (req, res, next) => {
   console.log(req.query);
   const filteredJobs = new FilteringFeatures(Job.find(), req.query)
     .filter()

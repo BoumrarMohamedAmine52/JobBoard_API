@@ -1,11 +1,40 @@
 const express = require("express");
 const morgan = require("morgan");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+const hpp = require("hpp");
 
 const app = express();
 
-app.use(express.json());
+///
+app.use(helmet(npm));
 
-app.use(morgan("dev"));
+///
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 1 * 60 * 60 * 1000,
+  message: "Too many request, please try later in an hour!",
+});
+
+app.use("/api", limiter);
+
+///
+app.use(express.json({ limit: "10kb" }));
+
+///
+app.use(mongoSanitize());
+
+///
+app.use(xss());
+
+//
+app.use(hpp());
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 const JobRouter = require("./Routes/jobRoutes");
 const userRouter = require("./Routes/userRoutes");

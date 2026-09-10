@@ -22,7 +22,7 @@ Router.route("/myApplications").get(
   applicationControllers.myApplications,
 );
 
-Router.route("/:id")
+Router.route("/application/:id")
   .get(
     authControllers.protect,
     authControllers.givePermissionTo("candidate"),
@@ -42,11 +42,11 @@ Router.route("/:id")
     applicationControllers.deleteMyApplication,
   );
 
-Router.route("/getJobApplications/:id").get(
+Router.route("/jobApplications/:id").get(
   authControllers.protect,
   authControllers.givePermissionTo("employer"),
   authControllers.restrictToOwnerOnly(Job),
-  applicationControllers.getJobApplications,
+  applicationControllers.jobApplications,
 );
 
 Router.route("/applicationStatus/:id").patch(

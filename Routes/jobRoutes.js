@@ -7,7 +7,7 @@ const authControllers = require("../Controllers/authController");
 const Job = require("../Models/jobModel");
 
 Router.route("/")
-  .get(jobControllers.getAllJobs)
+  .get(jobControllers.allJobs)
   .post(
     authControllers.protect,
     authControllers.givePermissionTo("employer"),
@@ -21,7 +21,7 @@ Router.route("/myJobs").get(
   jobControllers.myJobs,
 );
 
-Router.route("/:id")
+Router.route("/job/:id")
   .get(jobControllers.getJob)
   .patch(
     authControllers.protect,

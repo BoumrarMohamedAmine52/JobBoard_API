@@ -80,7 +80,7 @@ exports.deleteMyApplication = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.getJobApplications = asyncHandler(async (req, res, next) => {
+exports.jobApplications = asyncHandler(async (req, res, next) => {
   const jobApplications = await Application.find({
     job: req.params.id,
   });
